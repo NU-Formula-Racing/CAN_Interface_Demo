@@ -15,7 +15,7 @@ TeensyCAN<1> can_bus{};
 #ifdef ARDUINO_ARCH_ESP32
 #include "esp_can.h"
 // The tx and rx pins are constructor arguments to ESPCan, which default to TX = 5, RX = 4
-ESPCan can_bus{};
+ESPCAN can_bus{};
 #endif
 
 /**
@@ -53,7 +53,7 @@ CANTXMessage<4> tx_message{can_bus, 0x100, 8, std::chrono::milliseconds{100}, fl
  * CANRXMessages automatically register themselves with the can_bus on construction
  *
  */
-CANRXMessage<4> rx_message{can_bus, 0x100, float_rx_signal, uint8_t_rx_signal, bool_rx_signal, millis_rx_signal};
+CANRXMessage<4> rx_message{can_bus, 0x200, float_rx_signal, uint8_t_rx_signal, bool_rx_signal, millis_rx_signal};
 
 void setup()
 {
@@ -94,23 +94,23 @@ void loop()
   while (std::chrono::milliseconds(millis()) < next_tick_time)
   {
   }
-  Serial.print("Sent float: ");
+  /* Serial.print("Sent float: ");
   Serial.print(float_tx_signal);
   Serial.print(" Sent uint8_t: ");
   Serial.print(uint8_t_tx_signal);
   Serial.print(" Sent bool: ");
   Serial.print(bool_tx_signal);
-  Serial.print(" Sent millis: ");
+  Serial.print(" Sent millis: ");*/
   Serial.println(millis_tx_signal);
-
-  Serial.print("Received float: ");
-  Serial.print(float(test_float));
-  Serial.print(" Received uint8_t: ");
-  Serial.print(uint8_t(test_uint8_t));
-  Serial.print(" Received bool: ");
-  Serial.print(bool(test_bool));
-  Serial.print(" Received millis: ");
-  Serial.println(uint32_t(test_millis));
+  /*
+    Serial.print("Received float: ");
+    Serial.print(float(test_float));
+    Serial.print(" Received uint8_t: ");
+    Serial.print(uint8_t(test_uint8_t));
+    Serial.print(" Received bool: ");
+    Serial.print(bool(test_bool));
+    Serial.print(" Received millis: ");
+    Serial.println(uint32_t(test_millis)); */
 
   tx_message.Tick(kTickPeriod);
   next_tick_time =
