@@ -46,14 +46,14 @@ CANSignal<uint32_t, 32, 32, CANTemplateConvertFloat(1), CANTemplateConvertFloat(
  * CANTXMessage takes the CAN bus to transmit on, the message ID, the message size in bytes (based on the end position of the highest signal), the transmit period, and the signals as arguments
  *
  */
-CANTXMessage<4> tx_message{can_bus, 0x100, 8, std::chrono::milliseconds{100}, float_tx_signal, uint8_t_tx_signal, bool_tx_signal, millis_tx_signal};
+CANTXMessage<4> tx_message{can_bus, 0x200, 8, 100, millis(), float_tx_signal, uint8_t_tx_signal, bool_tx_signal, millis_tx_signal};
 
 /**
  * CANRXMessage takes the CAN bus to receive on, the message ID, and the signals to be received as constructor arguments
  * CANRXMessages automatically register themselves with the can_bus on construction
  *
  */
-CANRXMessage<4> rx_message{can_bus, 0x200, float_rx_signal, uint8_t_rx_signal, bool_rx_signal, millis_rx_signal};
+CANRXMessage<4> rx_message{can_bus, 0x100, float_rx_signal, uint8_t_rx_signal, bool_rx_signal, millis_rx_signal};
 
 void setup()
 {
@@ -61,7 +61,6 @@ void setup()
    * The CAN bus(es) need to be initialized with their baud rate
    *
    */
-  can_bus.RegisterRXMessage(rx_message);
   can_bus.Initialize(ICAN::BaudRate::kBaud1M);
 
   Serial.begin(9600);
@@ -90,29 +89,29 @@ void loop()
   can_bus.Tick();
 
   // The CANRXMessage automatically gets updated on message reception from the interrupt.
-  // The CANTXMessage must be periodically ticked with an elapsed time in order to automatically be sent.
+  // The CANTXMessage must have its timer periodically ticked with the current time in order to automatically be sent.
   while (std::chrono::milliseconds(millis()) < next_tick_time)
   {
   }
-  /* Serial.print("Sent float: ");
+  Serial.print("Sent float: ");
   Serial.print(float_tx_signal);
   Serial.print(" Sent uint8_t: ");
   Serial.print(uint8_t_tx_signal);
   Serial.print(" Sent bool: ");
   Serial.print(bool_tx_signal);
-  Serial.print(" Sent millis: ");*/
+  Serial.print(" Sent millis: ");
   Serial.println(millis_tx_signal);
-  /*
-    Serial.print("Received float: ");
-    Serial.print(float(test_float));
-    Serial.print(" Received uint8_t: ");
-    Serial.print(uint8_t(test_uint8_t));
-    Serial.print(" Received bool: ");
-    Serial.print(bool(test_bool));
-    Serial.print(" Received millis: ");
-    Serial.println(uint32_t(test_millis)); */
 
-  tx_message.Tick(kTickPeriod);
+  Serial.print("Received float: ");
+  Serial.print(float(test_float));
+  Serial.print(" Received uint8_t: ");
+  Serial.print(uint8_t(test_uint8_t));
+  Serial.print(" Received bool: ");
+  Serial.print(bool(test_bool));
+  Serial.print(" Received millis: ");
+  Serial.println(uint32_t(test_millis));
+
+  tx_message.GetTransmitTimer().Tick(millis());
   next_tick_time =
       std::chrono::milliseconds(millis()) + kTickPeriod - (std::chrono::milliseconds(millis()) - next_tick_time);
 }
