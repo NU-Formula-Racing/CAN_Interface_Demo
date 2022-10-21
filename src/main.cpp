@@ -58,16 +58,8 @@ CANSignal<uint32_t, 32, 32, CANTemplateConvertFloat(1), CANTemplateConvertFloat(
  * CANTXMessage can also take a VirtualTimerGroup to add its transmit timer to
  *
  */
-CANTXMessage<4> tx_message{can_bus,
-                           0x200,
-                           8,
-                           100,
-                           millis(),
-                           timer_group,
-                           float_tx_signal,
-                           uint8_t_tx_signal,
-                           bool_tx_signal,
-                           millis_tx_signal};
+CANTXMessage<4> tx_message{
+    can_bus, 0x200, 8, 100, timer_group, float_tx_signal, uint8_t_tx_signal, bool_tx_signal, millis_tx_signal};
 
 /**
  * CANRXMessage takes the CAN bus to receive on, the message ID, and the signals to be received as constructor arguments
