@@ -59,14 +59,14 @@ CANSignal<uint32_t, 32, 32, CANTemplateConvertFloat(1), CANTemplateConvertFloat(
  *
  */
 CANTXMessage<4> tx_message{
-    can_bus, 0x200, 8, 100, timer_group, float_tx_signal, uint8_t_tx_signal, bool_tx_signal, millis_tx_signal};
+    can_bus, 0x100, 8, 100, timer_group, float_tx_signal, uint8_t_tx_signal, bool_tx_signal, millis_tx_signal};
 
 /**
  * CANRXMessage takes the CAN bus to receive on, the message ID, and the signals to be received as constructor arguments
  * CANRXMessages automatically register themselves with the can_bus on construction
  *
  */
-CANRXMessage<4> rx_message{can_bus, 0x100, float_rx_signal, uint8_t_rx_signal, bool_rx_signal, millis_rx_signal};
+CANRXMessage<4> rx_message{can_bus, 0x200, float_rx_signal, uint8_t_rx_signal, bool_rx_signal, millis_rx_signal};
 
 // You should make a function to do anything that needs to be periodic and run it with a VirtualTimer in a TimerGroup
 void ten_ms_task()
@@ -88,6 +88,7 @@ void ten_ms_task()
     // The CANRXMessage automatically gets updated on message reception from the interrupt. Not: in order for this to
     // work, you must periodically call Tick() on the can_bus
     can_bus.Tick();
+#ifndef ARDUINO_ARCH_ESP32  // ESP gets sad and doesn't work properly if you serial print too much
     Serial.print("Sent float: ");
     Serial.print(float_tx_signal);
     Serial.print(" Sent uint8_t: ");
@@ -105,6 +106,7 @@ void ten_ms_task()
     Serial.print(bool(test_bool));
     Serial.print(" Received millis: ");
     Serial.println(uint32_t(test_millis));
+#endif
 }
 
 void setup()
