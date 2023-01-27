@@ -36,15 +36,15 @@ VirtualTimerGroup timer_group{};
  * other templated arguments There are no constructor arguments
  *
  */
-CANSignal<float, 0, 16, CANTemplateConvertFloat(0.01), CANTemplateConvertFloat(0), true> float_tx_signal{};
-CANSignal<uint8_t, 16, 8, CANTemplateConvertFloat(1), CANTemplateConvertFloat(0), false> uint8_t_tx_signal{};
-CANSignal<bool, 24, 1, CANTemplateConvertFloat(1), CANTemplateConvertFloat(0), false> bool_tx_signal{};
-CANSignal<uint32_t, 32, 32, CANTemplateConvertFloat(1), CANTemplateConvertFloat(0), false> millis_tx_signal{};
+MakeSignedCANSignal(float, 0, 16, 0.01, 0) float_tx_signal{};
+MakeUnsignedCANSignal(uint8_t, 16, 8, 1, 0) uint8_t_tx_signal{};
+MakeUnsignedCANSignal(bool, 24, 1, 1, 0) bool_tx_signal{};
+MakeUnsignedCANSignal(uint32_t, 32, 32, 1, 0) millis_tx_signal{};
 
-CANSignal<float, 0, 16, CANTemplateConvertFloat(0.01), CANTemplateConvertFloat(0), true> float_rx_signal{};
-CANSignal<uint8_t, 16, 8, CANTemplateConvertFloat(1), CANTemplateConvertFloat(0), false> uint8_t_rx_signal{};
-CANSignal<bool, 24, 1, CANTemplateConvertFloat(1), CANTemplateConvertFloat(0), false> bool_rx_signal{};
-CANSignal<uint32_t, 32, 32, CANTemplateConvertFloat(1), CANTemplateConvertFloat(0), false> millis_rx_signal{};
+MakeSignedCANSignal(float, 0, 16, 0.01, 0) float_rx_signal{};
+MakeUnsignedCANSignal(uint8_t, 16, 8, 1, 0) uint8_t_rx_signal{};
+MakeUnsignedCANSignal(bool, 24, 1, 1, 0) bool_rx_signal{};
+MakeUnsignedCANSignal(uint32_t, 32, 32, 1, 0) millis_rx_signal{};
 
 /**
  * The CANTXMessage and CANRXMessage classes are used to create messages with signals in them.
@@ -66,7 +66,13 @@ CANTXMessage<4> tx_message{
  * CANRXMessages automatically register themselves with the can_bus on construction
  *
  */
-CANRXMessage<4> rx_message{can_bus, 0x200, float_rx_signal, uint8_t_rx_signal, bool_rx_signal, millis_rx_signal};
+CANRXMessage<4> rx_message{can_bus,
+                           0x200,
+                           []() { Serial.println(rx_message.GetLastReceiveTime()); },
+                           float_rx_signal,
+                           uint8_t_rx_signal,
+                           bool_rx_signal,
+                           millis_rx_signal};
 
 // You should make a function to do anything that needs to be periodic and run it with a VirtualTimer in a TimerGroup
 void ten_ms_task()
