@@ -30,10 +30,9 @@ VirtualTimerGroup timer_group{};
 /**
  * Every CAN message, TX or RX, has signals, which need to be instantiated before the message. You should never put the
  * same signal in multiple messages. The CANSignal class is used to create these signals. The signal type, starting
- * position, length, factor, offset, and signedness of the signal are all templated arguments CANSignal<SignalType,
- * start_position, length, factor (using CANTemplateConvertFloat due to C++ limitations), offset (using
- * CANTemplateConvertFloat due to C++ limitations), is_signed> Note: you should never override the defaults for the
- * other templated arguments There are no constructor arguments
+ * position, length, factor, offset, and signedness of the signal are all templated arguments. You can construct a
+ * CANSignal using the MakeSignedCANSignal(SignalType, position, length, factor, offset) or
+ * MakeUnsignedCANSignal(SignalType, position, length, factor, offset) macro. There are no constructor arguments
  *
  */
 MakeSignedCANSignal(float, 0, 16, 0.01, 0) float_tx_signal{};
