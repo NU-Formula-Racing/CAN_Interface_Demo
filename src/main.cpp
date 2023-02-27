@@ -122,6 +122,9 @@ void setup()
      */
     can_bus.Initialize(ICAN::BaudRate::kBaud1M);
 
+    // Any RX messages need to be registered with the bus to be received properly
+    can_bus.RegisterRXMessage(rx_message);
+
     // You can create a new timer in a VirtualTimerGroup using the AddTimer(function, time) function
     timer_group.AddTimer(10, ten_ms_task);
 
