@@ -45,6 +45,17 @@ MakeUnsignedCANSignal(uint8_t, 16, 8, 1, 0) uint8_t_rx_signal{};
 MakeUnsignedCANSignal(bool, 24, 1, 1, 0) bool_rx_signal{};
 MakeUnsignedCANSignal(uint32_t, 32, 32, 1, 0) millis_rx_signal{};
 
+// big endian
+MakeEndianSignedCANSignal(float, 0, 16, 0.01, 0, ICANSignal::ByteOrder::kBigEndian) big_endian_float_tx_signal{};
+MakeEndianUnsignedCANSignal(uint8_t, 16, 8, 1, 0, ICANSignal::ByteOrder::kBigEndian) big_endian_uint8_t_tx_signal{};
+MakeEndianUnsignedCANSignal(bool, 24, 1, 1, 0, ICANSignal::ByteOrder::kBigEndian) big_endian_bool_tx_signal{};
+MakeEndianUnsignedCANSignal(uint32_t, 32, 32, 1, 0, ICANSignal::ByteOrder::kBigEndian) big_endian_millis_tx_signal{};
+
+MakeEndianSignedCANSignal(float, 0, 16, 0.01, 0, ICANSignal::ByteOrder::kBigEndian) big_endian_float_rx_signal{};
+MakeEndianUnsignedCANSignal(uint8_t, 16, 8, 1, 0, ICANSignal::ByteOrder::kBigEndian) big_endian_uint8_t_rx_signal{};
+MakeEndianUnsignedCANSignal(bool, 24, 1, 1, 0, ICANSignal::ByteOrder::kBigEndian) big_endian_bool_rx_signal{};
+MakeEndianUnsignedCANSignal(uint32_t, 32, 32, 1, 0, ICANSignal::ByteOrder::kBigEndian) big_endian_millis_rx_signal{};
+
 /**
  * The CANTXMessage and CANRXMessage classes are used to create messages with signals in them.
  * Both of these classes take the number of signals as a templated argument (CAN*xMessage<num_signals>)
@@ -72,6 +83,25 @@ CANRXMessage<4> rx_message{can_bus,
                            uint8_t_rx_signal,
                            bool_rx_signal,
                            millis_rx_signal};
+
+// big endian
+CANTXMessage<4> big_endian_tx_message{can_bus,
+                                      0x300,
+                                      8,
+                                      100,
+                                      timer_group,
+                                      big_endian_float_tx_signal,
+                                      big_endian_uint8_t_tx_signal,
+                                      big_endian_bool_tx_signal,
+                                      big_endian_millis_tx_signal};
+
+CANRXMessage<4> big_endian_rx_message{can_bus,
+                                      0x400,
+                                      []() { Serial.println(rx_message.GetLastReceiveTime()); },
+                                      big_endian_float_rx_signal,
+                                      big_endian_uint8_t_rx_signal,
+                                      big_endian_bool_rx_signal,
+                                      big_endian_millis_rx_signal};
 
 // You should make a function to do anything that needs to be periodic and run it with a VirtualTimer in a TimerGroup
 void ten_ms_task()
